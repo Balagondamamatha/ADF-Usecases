@@ -1,0 +1,9 @@
+{
+	"name": "dfusecase04",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "b085228e-38b8-4a39-b1e5-8f034d4597b6",
+		"tenantId": "76a2ae5a-9f00-4f6b-95ed-5d33d77c4d61"
+	}
+}

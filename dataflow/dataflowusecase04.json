@@ -1,0 +1,89 @@
+{
+	"name": "dataflowusecase04",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "sales",
+						"type": "DatasetReference"
+					},
+					"name": "usecase04"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "valid",
+						"type": "DatasetReference"
+					},
+					"name": "validsink"
+				},
+				{
+					"dataset": {
+						"referenceName": "Invalid",
+						"type": "DatasetReference"
+					},
+					"name": "Invalidsink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "valid"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          SalesDate as string,",
+				"          SalesMan as string,",
+				"          Item as string,",
+				"          Units as string,",
+				"          Unit_price as string,",
+				"          Sale_amt as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> usecase04",
+				"usecase04 split(!isNull(toFloat(replace(byName('Sale_amt'), ',', ''))),",
+				"     disjoint: false) ~> valid@(valid, Invalid)",
+				"valid@valid sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          SalesDate as date,",
+				"          SalesMan as string,",
+				"          Item as string,",
+				"          Units as integer,",
+				"          Unit_price as decimal(10,2),",
+				"          Sale_amt as decimal(12,2)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> validsink",
+				"valid@Invalid sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          SalesDate as string,",
+				"          SalesMan as string,",
+				"          Item as string,",
+				"          Units as integer,",
+				"          Unit_price as decimal(20,2),",
+				"          Sale_amt as decimal(20,2)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> Invalidsink"
+			]
+		}
+	}
+}
