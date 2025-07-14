@@ -1,0 +1,9 @@
+{
+	"name": "adfusecase03",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "a44d0848-3c6a-41ba-bd70-c39b5d694ab0",
+		"tenantId": "76a2ae5a-9f00-4f6b-95ed-5d33d77c4d61"
+	}
+}
