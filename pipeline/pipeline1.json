@@ -24,7 +24,7 @@
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "us04",
+						"activity": "Data flow usecase04",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -44,7 +44,7 @@
 				}
 			},
 			{
-				"name": "us04",
+				"name": "Data flow usecase04",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
@@ -64,7 +64,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "dataflowusecase04",
+						"referenceName": "dataflow1",
 						"type": "DataFlowReference"
 					},
 					"compute": {
@@ -81,7 +81,7 @@
 			}
 		},
 		"annotations": [],
-		"lastPublishTime": "2025-07-14T16:39:05Z"
+		"lastPublishTime": "2025-07-15T04:34:34Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

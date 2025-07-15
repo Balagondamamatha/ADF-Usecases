@@ -1,0 +1,9 @@
+{
+	"name": "usecase04",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "7c386f4a-7fe8-4a61-8fb7-51a373c4497b",
+		"tenantId": "76a2ae5a-9f00-4f6b-95ed-5d33d77c4d61"
+	}
+}

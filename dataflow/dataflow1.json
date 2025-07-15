@@ -9,83 +9,80 @@
 						"referenceName": "DelimitedText1",
 						"type": "DatasetReference"
 					},
-					"name": "usecase2source"
+					"name": "usecase04source"
 				}
 			],
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "DS_gold",
+						"referenceName": "AzureSqlTable1",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "validsink"
 				},
 				{
 					"dataset": {
-						"referenceName": "DS_silver",
+						"referenceName": "AzureSqlTable2",
 						"type": "DatasetReference"
 					},
-					"name": "sink2"
-				},
-				{
-					"dataset": {
-						"referenceName": "DS_bronze",
-						"type": "DatasetReference"
-					},
-					"name": "sink3"
+					"name": "invalidsink"
 				}
 			],
 			"transformations": [
 				{
-					"name": "split1"
+					"name": "validsales"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
-				"          ID as string,",
-				"          Name as string,",
-				"          Gender as string,",
-				"          Age as string,",
-				"          {Height (cm)} as string,",
-				"          {Weight (kg)} as string,",
-				"          Team as string,",
-				"          NOC as string,",
-				"          Games as string,",
-				"          Year as string,",
-				"          Season as string,",
-				"          City as string,",
-				"          Sport as string,",
-				"          Event as string,",
-				"          Medal as string",
+				"          SalesDate as date 'dd-MM-yyyy',",
+				"          SalesMan as string,",
+				"          Item as string,",
+				"          Units as integer,",
+				"          Unit_price as double '000,000,000.000',",
+				"          Sale_amt as double '000,000,000.000'",
 				"     ),",
-				"     allowSchemaDrift: false,",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> usecase2source",
-				"usecase2source split(Medal==\"Gold\",",
-				"     Medal==\"Silver\",",
-				"     Medal==\"Bronze\",",
-				"     disjoint: false) ~> split1@(gold, silver, bronze)",
-				"split1@gold sink(allowSchemaDrift: true,",
+				"     ignoreNoFilesFound: false) ~> usecase04source",
+				"usecase04source split(Units > 0 && toDecimal(Unit_price) >= 0.0 && toDecimal(Sale_amt) >= 0.0 &&!isNull(SalesMan) &&!isNull(SalesDate) &&!isNull(Item),",
+				"     disjoint: false) ~> validsales@(valid, invalid)",
+				"validsales@valid sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
+				"     input(",
+				"          SalesDate as date,",
+				"          SalesMan as string,",
+				"          Item as string,",
+				"          Units as integer,",
+				"          Unit_price as decimal(10,2),",
+				"          Sale_amt as decimal(10,2)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1",
-				"split1@silver sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> validsink",
+				"validsales@invalid sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
+				"     input(",
+				"          SalesDate as date,",
+				"          SalesMan as string,",
+				"          Item as string,",
+				"          Units as integer,",
+				"          Unit_price as decimal(10,2),",
+				"          Sale_amt as decimal(10,2)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink2",
-				"split1@bronze sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink3"
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> invalidsink"
 			]
 		}
 	}
